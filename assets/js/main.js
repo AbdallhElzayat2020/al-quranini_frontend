@@ -419,8 +419,7 @@ function showNotification(message, type = 'info') {
     position: fixed;
     top: 100px;
     right: 20px;
-    background: ${
-      type === 'success' ? '#5fc3ac' : type === 'error' ? '#e74c3c' : '#1f2b7b'
+    background: ${type === 'success' ? '#5fc3ac' : type === 'error' ? '#e74c3c' : '#1f2b7b'
     };
     color: white;
     padding: 1rem 1.5rem;
@@ -456,6 +455,86 @@ function showNotification(message, type = 'info') {
   }, 5000);
 }
 
+// ===== FAQ Accordion =====
+function initFAQAccordion() {
+  const faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach((item) => {
+    const question = item.querySelector('.faq-question');
+    const answer = item.querySelector('.faq-answer');
+
+    if (question && answer) {
+      question.addEventListener('click', () => {
+        // Close all other items
+        faqItems.forEach((otherItem) => {
+          if (otherItem !== item) {
+            otherItem.classList.remove('active');
+          }
+        });
+
+        // Toggle current item
+        item.classList.toggle('active');
+      });
+    }
+  });
+}
+
+// ===== Contact Form Handler =====
+function initContactForm() {
+  const contactForm = document.querySelector('.contact-form');
+
+  if (contactForm) {
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Get form data
+      const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        message: document.getElementById('message').value,
+        date: new Date().toLocaleString('ar-SA', {
+          timeZone: 'Asia/Riyadh',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        timestamp: Date.now()
+      };
+
+      // Validate form
+      if (!formData.name || !formData.email || !formData.message) {
+        showNotification('الرجاء ملء جميع الحقول المطلوبة', 'error');
+        return;
+      }
+
+      // Save to localStorage
+      try {
+        let submissions = JSON.parse(localStorage.getItem('contactSubmissions') || '[]');
+        submissions.unshift(formData); // Add to beginning of array
+
+        // Keep only last 100 submissions
+        if (submissions.length > 100) {
+          submissions = submissions.slice(0, 100);
+        }
+
+        localStorage.setItem('contactSubmissions', JSON.stringify(submissions));
+
+        // Show success message
+        showNotification('تم إرسال رسالتك بنجاح! سنتواصل معك قريباً', 'success');
+
+        // Reset form
+        contactForm.reset();
+
+      } catch (error) {
+        console.error('Error saving form data:', error);
+        showNotification('حدث خطأ أثناء إرسال الرسالة. الرجاء المحاولة مرة أخرى', 'error');
+      }
+    });
+  }
+}
+
 // ===== Initialize All Functions =====
 function init() {
   // Initialize AOS
@@ -479,6 +558,7 @@ function init() {
   initPageLoading();
   initServiceCardsEffect();
   initFormEnhancements();
+  initContactForm(); // Add contact form handler
   initAccessibility();
   initPerformanceOptimizations();
   initErrorHandling();

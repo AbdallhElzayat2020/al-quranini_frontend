@@ -87,12 +87,12 @@ body {
 }
 
 :root {
-  --primary: #1f2b7b; /* deep indigo */
-  --accent: #5fc3ac; /* teal */
+  --primary: #2562e1; /* deep indigo */
+  --accent: #02214c; /* teal */
   --muted: #666666;
   --white: #ffffff;
   --light-gray: #f8f9fa;
-  --dark-gray: #2c3e50;
+  --dark-gray: #02214c;
   --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.15);
   --border-radius: 10px;
@@ -658,7 +658,7 @@ section {
 .feature-icon {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #02214c 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -824,7 +824,7 @@ section {
 .reason-icon {
   width: 70px;
   height: 70px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #02214c 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1292,7 +1292,7 @@ section {
 
 /* ===== Footer ===== */
 .footer {
-  background: var(--primary);
+  background: var(--accent);
   color: var(--white);
   padding: 60px 0 20px;
 }
@@ -1303,7 +1303,7 @@ section {
 }
 
 .footer-title {
-  color: var(--accent);
+  color: var(--white);
   font-size: 1.8rem;
 }
 

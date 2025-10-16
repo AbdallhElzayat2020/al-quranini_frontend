@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>لوحة التحكم - الرسائل والطلبات</title>
+	<link rel="icon" type="image/svg+xml" href="./assets/images/logo_main.png" />
+
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+	<!-- Google Fonts for Arabic -->
+	<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+	<!-- Font Awesome Icons -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+	<style>
+		* {
+			font-family: 'Cairo', sans-serif;
+		}
+
+		body {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			min-height: 100vh;
+			padding: 2rem 0;
+		}
+
+		.admin-container {
+			max-width: 1400px;
+			margin: 0 auto;
+			padding: 0 1rem;
+		}
+
+		.admin-header {
+			background: white;
+			padding: 2rem;
+			border-radius: 15px;
+			margin-bottom: 2rem;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+			text-align: center;
+		}
+
+		.admin-header h1 {
+			color: #1f2b7b;
+			margin-bottom: 0.5rem;
+			font-weight: 700;
+		}
+
+		.admin-header p {
+			color: #666;
+			margin-bottom: 0;
+		}
+
+		.stats-row {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 1rem;
+			margin-bottom: 2rem;
+		}
+
+		.stat-card {
+			background: white;
+			padding: 1.5rem;
+			border-radius: 15px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+			text-align: center;
+			transition: transform 0.3s;
+		}
+
+		.stat-card:hover {
+			transform: translateY(-5px);
+		}
+
+		.stat-card i {
+			font-size: 2.5rem;
+			margin-bottom: 1rem;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			background-clip: text;
+		}
+
+		.stat-card h3 {
+			font-size: 2rem;
+			font-weight: 700;
+			color: #1f2b7b;
+			margin-bottom: 0.5rem;
+		}
+
+		.stat-card p {
+			color: #666;
+			margin-bottom: 0;
+		}
+
+		.messages-container {
+			background: white;
+			padding: 2rem;
+			border-radius: 15px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+		}
+
+		.messages-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 2rem;
+			flex-wrap: wrap;
+			gap: 1rem;
+		}
+
+		.messages-header h2 {
+			color: #1f2b7b;
+			margin-bottom: 0;
+			font-weight: 700;
+		}
+
+		.search-box {
+			position: relative;
+			width: 100%;
+			max-width: 300px;
+		}
+
+		.search-box input {
+			width: 100%;
+			padding: 0.75rem 1rem 0.75rem 3rem;
+			border: 2px solid #e0e0e0;
+			border-radius: 50px;
+			transition: all 0.3s;
+			font-size: 0.95rem;
+		}
+
+		.search-box input:focus {
+			outline: none;
+			border-color: #667eea;
+			box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+		}
+
+		.search-box i {
+			position: absolute;
+			right: 1rem;
+			top: 50%;
+			transform: translateY(-50%);
+			color: #999;
+		}
+
+		.action-buttons {
+			display: flex;
+			gap: 0.5rem;
+			flex-wrap: wrap;
+		}
+
+		.btn-custom {
+			padding: 0.75rem 1.5rem;
+			border-radius: 50px;
+			border: none;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.3s;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+		}
+
+		.btn-export {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+		}
+
+		.btn-export:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+		}
+
+		.btn-clear {
+			background: #e74c3c;
+			color: white;
+		}
+
+		.btn-clear:hover {
+			background: #c0392b;
+			transform: translateY(-2px);
+		}
+
+		.message-card {
+			background: #f8f9fa;
+			border: 2px solid #e0e0e0;
+			border-radius: 15px;
+			padding: 1.5rem;
+			margin-bottom: 1rem;
+			transition: all 0.3s;
+			animation: fadeIn 0.5s;
+		}
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+				transform: translateY(20px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		.message-card:hover {
+			border-color: #667eea;
+			box-shadow: 0 5px 20px rgba(102, 126, 234, 0.15);
+		}
+
+		/* Highlight newly arrived message */
+		.message-card.new {
+			border-color: #5fc3ac;
+			box-shadow: 0 8px 24px rgba(95, 195, 172, 0.25);
+			animation: pulse 1.2s ease-in-out 2;
+		}
+
+		@keyframes pulse {
+			0% {
+				transform: translateY(0);
+			}
+
+			50% {
+				transform: translateY(-4px);
+			}
+
+			100% {
+				transform: translateY(0);
+			}
+		}
+
+		.message-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: start;
+			margin-bottom: 1rem;
+			flex-wrap: wrap;
+			gap: 1rem;
+		}
+
+		.message-info {
+			flex: 1;
+		}
+
+		.message-name {
+			font-size: 1.2rem;
+			font-weight: 700;
+			color: #1f2b7b;
+			margin-bottom: 0.25rem;
+		}
+
+		.message-contact {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 1rem;
+			color: #666;
+			font-size: 0.9rem;
+		}
+
+		.message-contact i {
+			color: #667eea;
+			margin-left: 0.25rem;
+		}
+
+		.message-date {
+			background: #667eea;
+			color: white;
+			padding: 0.5rem 1rem;
+			border-radius: 50px;
+			font-size: 0.85rem;
+			white-space: nowrap;
+		}
+
+		.message-text {
+			background: white;
+			padding: 1rem;
+			border-radius: 10px;
+			color: #333;
+			line-height: 1.8;
+			margin-bottom: 1rem;
+		}
+
+		.message-actions {
+			display: flex;
+			gap: 0.5rem;
+			justify-content: flex-end;
+		}
+
+		.btn-small {
+			padding: 0.5rem 1rem;
+			border-radius: 50px;
+			border: none;
+			font-size: 0.85rem;
+			cursor: pointer;
+			transition: all 0.3s;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.25rem;
+		}
+
+		.btn-delete {
+			background: #e74c3c;
+			color: white;
+		}
+
+		.btn-delete:hover {
+			background: #c0392b;
+		}
+
+		.btn-copy {
+			background: #3498db;
+			color: white;
+		}
+
+		.btn-copy:hover {
+			background: #2980b9;
+		}
+
+		.empty-state {
+			text-align: center;
+			padding: 4rem 2rem;
+			color: #999;
+		}
+
+		.empty-state i {
+			font-size: 4rem;
+			margin-bottom: 1rem;
+			color: #ddd;
+		}
+
+		.empty-state h3 {
+			color: #666;
+			margin-bottom: 0.5rem;
+		}
+
+		.notification {
+			position: fixed;
+			top: 20px;
+			left: 50%;
+			transform: translateX(-50%) translateY(-100px);
+			background: #5fc3ac;
+			color: white;
+			padding: 1rem 2rem;
+			border-radius: 50px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+			z-index: 10000;
+			transition: transform 0.3s;
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+		}
+
+		.notification.show {
+			transform: translateX(-50%) translateY(0);
+		}
+
+		@media (max-width: 768px) {
+			.admin-header {
+				padding: 1.5rem;
+			}
+
+			.messages-container {
+				padding: 1rem;
+			}
+
+			.messages-header {
+				flex-direction: column;
+			}
+
+			.search-box {
+				max-width: 100%;
+			}
+
+			.message-contact {
+				flex-direction: column;
+				gap: 0.5rem;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="admin-container">
+		<!-- Header -->
+		<div class="admin-header">
+			<h1>
+				<i class="fas fa-envelope-open-text"></i>
+				لوحة التحكم - الرسائل والطلبات
+			</h1>
+			<p>إدارة جميع رسائل التواصل من العملاء</p>
+			<div style="margin-top: 1rem;">
+				<button id="logoutBtn" class="btn btn-danger btn-sm">
+					<i class="fas fa-sign-out-alt"></i>
+					تسجيل الخروج
+				</button>
+			</div>
+		</div>
+
+		<!-- Statistics -->
+		<div class="stats-row">
+			<div class="stat-card">
+				<i class="fas fa-envelope"></i>
+				<h3 id="totalMessages">0</h3>
+				<p>إجمالي الرسائل</p>
+			</div>
+			<div class="stat-card">
+				<i class="fas fa-calendar-day"></i>
+				<h3 id="todayMessages">0</h3>
+				<p>رسائل اليوم</p>
+			</div>
+			<div class="stat-card">
+				<i class="fas fa-clock"></i>
+				<h3 id="lastMessage">لا يوجد</h3>
+				<p>آخر رسالة</p>
+			</div>
+		</div>
+
+		<!-- Messages Container -->
+		<div class="messages-container">
+			<div class="messages-header">
+				<h2>
+					<i class="fas fa-inbox"></i>
+					الرسائل الواردة
+				</h2>
+
+				<div style="display: flex; gap: 1rem; flex-wrap: wrap; flex: 1; justify-content: flex-end;">
+					<div class="search-box">
+						<i class="fas fa-search"></i>
+						<input type="text" id="searchInput" placeholder="بحث في الرسائل..." />
+					</div>
+
+					<div class="action-buttons">
+						<button class="btn-custom btn-clear" onclick="clearAllMessages()">
+							<i class="fas fa-trash-alt"></i>
+							مسح الكل
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div id="messagesContainer">
+				<!-- Messages will be loaded here -->
+			</div>
+		</div>
+	</div>
+
+	<!-- Notification -->
+	<div class="notification" id="notification">
+		<i class="fas fa-check-circle"></i>
+		<span id="notificationText"></span>
+	</div>
+
+	<script>
+		// Load and display messages
+		function loadMessages() {
+			const submissions = JSON.parse(localStorage.getItem('contactSubmissions') || '[]');
+			const container = document.getElementById('messagesContainer');
+			const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+			// Filter messages based on search
+			const filteredSubmissions = submissions.filter(msg => {
+				return msg.name.toLowerCase().includes(searchTerm) ||
+					msg.email.toLowerCase().includes(searchTerm) ||
+					msg.phone.includes(searchTerm) ||
+					msg.message.toLowerCase().includes(searchTerm);
+			});
+
+			// Update statistics
+			updateStatistics(submissions);
+
+			// Display messages
+			if (filteredSubmissions.length === 0) {
+				container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>لا توجد رسائل</h3>
+                        <p>${searchTerm ? 'لم يتم العثور على نتائج للبحث' : 'لم يتم استلام أي رسائل بعد'}</p>
+                    </div>
+                `;
+				return;
+			}
+
+			container.innerHTML = filteredSubmissions.map((msg, index) => `
+                <div class="message-card">
+                    <div class="message-header">
+                        <div class="message-info">
+                            <div class="message-name">${msg.name}</div>
+                            <div class="message-contact">
+                                <span>
+                                    <i class="fas fa-envelope"></i>
+                                    ${msg.email}
+                                </span>
+                                ${msg.phone ? `
+                                <span>
+                                    <i class="fas fa-phone"></i>
+                                    ${msg.phone}
+                                </span>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <div class="message-date">
+                            <i class="fas fa-clock"></i>
+                            ${msg.date}
+                        </div>
+                    </div>
+                    <div class="message-text">
+                        ${msg.message}
+                    </div>
+                    <div class="message-actions">
+                        <button class="btn-small btn-copy" onclick="copyMessage(${index})">
+                            <i class="fas fa-copy"></i>
+                            نسخ
+                        </button>
+                        <button class="btn-small btn-delete" onclick="deleteMessage(${index})">
+                            <i class="fas fa-trash"></i>
+                            حذف
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+		}
+
+		// Update statistics
+		function updateStatistics(submissions) {
+			document.getElementById('totalMessages').textContent = submissions.length;
+
+			// Count today's messages
+			const today = new Date().toLocaleDateString('ar-SA');
+			const todayCount = submissions.filter(msg => {
+				const msgDate = new Date(msg.timestamp).toLocaleDateString('ar-SA');
+				return msgDate === today;
+			}).length;
+			document.getElementById('todayMessages').textContent = todayCount;
+
+			// Last message time
+			if (submissions.length > 0) {
+				const lastTime = new Date(submissions[0].timestamp);
+				const now = new Date();
+				const diffMinutes = Math.floor((now - lastTime) / 1000 / 60);
+
+				let timeAgo;
+				if (diffMinutes < 1) {
+					timeAgo = 'الآن';
+				} else if (diffMinutes < 60) {
+					timeAgo = `منذ ${diffMinutes} د`;
+				} else if (diffMinutes < 1440) {
+					timeAgo = `منذ ${Math.floor(diffMinutes / 60)} س`;
+				} else {
+					timeAgo = `منذ ${Math.floor(diffMinutes / 1440)} يوم`;
+				}
+
+				document.getElementById('lastMessage').textContent = timeAgo;
+			}
+		}
+
+		// Delete message
+		function deleteMessage(index) {
+			if (!confirm('هل أنت متأكد من حذف هذه الرسالة؟')) {
+				return;
+			}
+
+			let submissions = JSON.parse(localStorage.getItem('contactSubmissions') || '[]');
+			submissions.splice(index, 1);
+			localStorage.setItem('contactSubmissions', JSON.stringify(submissions));
+			loadMessages();
+			showNotification('تم حذف الرسالة بنجاح');
+		}
+
+		// Copy message
+		function copyMessage(index) {
+			const submissions = JSON.parse(localStorage.getItem('contactSubmissions') || '[]');
+			const msg = submissions[index];
+			const text = `
+الاسم: ${msg.name}
+البريد الإلكتروني: ${msg.email}
+الهاتف: ${msg.phone || 'غير متوفر'}
+التاريخ: ${msg.date}
+
+الرسالة:
+${msg.message}
+            `.trim();
+
+			navigator.clipboard.writeText(text).then(() => {
+				showNotification('تم نسخ الرسالة بنجاح');
+			}).catch(() => {
+				showNotification('فشل النسخ', 'error');
+			});
+		}
+
+		// Clear all messages
+		function clearAllMessages() {
+			if (!confirm('هل أنت متأكد من حذف جميع الرسائل؟ هذا الإجراء لا يمكن التراجع عنه!')) {
+				return;
+			}
+
+			localStorage.removeItem('contactSubmissions');
+			loadMessages();
+			showNotification('تم مسح جميع الرسائل');
+		}
+
+		// Export to CSV
+		function exportToCSV() {
+			const submissions = JSON.parse(localStorage.getItem('contactSubmissions') || '[]');
+
+			if (submissions.length === 0) {
+				alert('لا توجد رسائل للتصدير');
+				return;
+			}
+
+			// Create CSV content with UTF-8 BOM for Arabic support
+			let csv = '\uFEFF'; // UTF-8 BOM
+			csv += 'الاسم,البريد الإلكتروني,الهاتف,الرسالة,التاريخ\n';
+
+			submissions.forEach(msg => {
+				csv += `"${msg.name}","${msg.email}","${msg.phone || ''}","${msg.message.replace(/"/g, '""')}","${msg.date}"\n`;
+			});
+
+			// Download file
+			const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+			const link = document.createElement('a');
+			const url = URL.createObjectURL(blob);
+			link.setAttribute('href', url);
+			link.setAttribute('download', `messages_${new Date().getTime()}.csv`);
+			link.style.visibility = 'hidden';
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+
+			showNotification('تم تصدير الرسائل بنجاح');
+		}
+
+		// Show notification
+		function showNotification(message, type = 'success') {
+			const notification = document.getElementById('notification');
+			const notificationText = document.getElementById('notificationText');
+
+			notificationText.textContent = message;
+			notification.style.background = type === 'success' ? '#5fc3ac' : '#e74c3c';
+			notification.classList.add('show');
+
+			setTimeout(() => {
+				notification.classList.remove('show');
+			}, 3000);
+		}
+
+		// Search functionality
+		document.getElementById('searchInput').addEventListener('input', loadMessages);
+
+		// Load messages on page load
+		loadMessages();
+
+		// Auto-refresh every 30 seconds
+		setInterval(loadMessages, 30000);
+
+		// Highlight the most recent message helper
+		function highlightLatestCard() {
+			const firstCard = document.querySelector('#messagesContainer .message-card');
+			if (firstCard) {
+				firstCard.classList.add('new');
+				firstCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				setTimeout(() => firstCard.classList.remove('new'), 2500);
+			}
+		}
+
+		// Real-time updates: listen for new submissions from other tabs/windows
+		window.addEventListener('storage', (e) => {
+			if (e.key === 'contactSubmissions') {
+				loadMessages();
+				showNotification('وصلت رسالة جديدة');
+				// Slight delay to ensure DOM updated
+				setTimeout(highlightLatestCard, 50);
+			}
+		});
+
+		// ======== Auth Guard & Logout ========
+		function authGuard() {
+			const isLoggedIn = localStorage.getItem('admin_logged_in') === 'true';
+			if (!isLoggedIn) {
+				// Preserve return URL
+				const returnTo = encodeURIComponent(location.pathname.replace(/\\\\/g, '/'));
+				location.href = `login.html?return=${returnTo}`;
+			}
+		}
+		// initial check
+		authGuard();
+		// re-check on BFCache restore and when tab becomes visible
+		window.addEventListener('pageshow', authGuard);
+		document.addEventListener('visibilitychange', function () {
+			if (document.visibilityState === 'visible') authGuard();
+		});
+
+		document.getElementById('logoutBtn').addEventListener('click', function () {
+			localStorage.removeItem('admin_logged_in');
+			localStorage.removeItem('admin_username');
+			location.href = 'login.html';
+		});
+	</script>
+</body>
+
+</html>
