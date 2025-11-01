@@ -419,7 +419,8 @@ function showNotification(message, type = 'info') {
     position: fixed;
     top: 100px;
     right: 20px;
-    background: ${type === 'success' ? '#5fc3ac' : type === 'error' ? '#e74c3c' : '#1f2b7b'
+    background: ${
+      type === 'success' ? '#5fc3ac' : type === 'error' ? '#e74c3c' : '#1f2b7b'
     };
     color: white;
     padding: 1rem 1.5rem;
@@ -498,9 +499,9 @@ function initContactForm() {
           month: 'long',
           day: 'numeric',
           hour: '2-digit',
-          minute: '2-digit'
+          minute: '2-digit',
         }),
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
 
       // Validate form
@@ -511,7 +512,9 @@ function initContactForm() {
 
       // Save to localStorage
       try {
-        let submissions = JSON.parse(localStorage.getItem('contactSubmissions') || '[]');
+        let submissions = JSON.parse(
+          localStorage.getItem('contactSubmissions') || '[]'
+        );
         submissions.unshift(formData); // Add to beginning of array
 
         // Keep only last 100 submissions
@@ -522,14 +525,19 @@ function initContactForm() {
         localStorage.setItem('contactSubmissions', JSON.stringify(submissions));
 
         // Show success message
-        showNotification('تم إرسال رسالتك بنجاح! سنتواصل معك قريباً', 'success');
+        showNotification(
+          'تم إرسال رسالتك بنجاح! سنتواصل معك قريباً',
+          'success'
+        );
 
         // Reset form
         contactForm.reset();
-
       } catch (error) {
         console.error('Error saving form data:', error);
-        showNotification('حدث خطأ أثناء إرسال الرسالة. الرجاء المحاولة مرة أخرى', 'error');
+        showNotification(
+          'حدث خطأ أثناء إرسال الرسالة. الرجاء المحاولة مرة أخرى',
+          'error'
+        );
       }
     });
   }
@@ -558,6 +566,7 @@ function init() {
   initPageLoading();
   initServiceCardsEffect();
   initFormEnhancements();
+  initPartnersSwiper();
   initContactForm(); // Add contact form handler
   initAccessibility();
   initPerformanceOptimizations();
@@ -578,4 +587,30 @@ window.IbrahimWebsite = {
   initActiveNavigation,
   initFAQAccordion,
   initStatsCounter,
+  initPartnersSwiper,
 };
+
+// ===== Partners Swiper =====
+function initPartnersSwiper() {
+  if (typeof Swiper === 'undefined') return;
+  const el = document.querySelector('.partners-swiper');
+  if (!el) return;
+
+  // eslint-disable-next-line no-new
+  new Swiper(el, {
+    slidesPerView: 2,
+    spaceBetween: 24,
+    loop: true,
+    autoplay: {
+      delay: 2000,
+      disableOnInteraction: false,
+    },
+    breakpoints: {
+      576: { slidesPerView: 3 },
+      768: { slidesPerView: 4 },
+      992: { slidesPerView: 5 },
+    },
+    allowTouchMove: true,
+    grabCursor: true,
+  });
+}
